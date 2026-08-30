@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Year One</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Year One">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#12141f">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312141f'/%3E%3Cpath d='M12 50 C28 50 40 42 50 18' fill='none' stroke='%23e8b86a' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='18' r='6' fill='%23f2a660'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#12141f;
+  --card:#1a1d2b;
+  --card-lift:#212536;
+  --horizon:#2c3146;
+  --dawn:#f0a35e;
+  --gold:#e6b566;
+  --sky:#a8c5d6;
+  --ink:#e8e6e1;
+  --muted:#8b90a5;
+  --dim:#5b6076;
+  --warn:#e07a5f;
+  --r:14px;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(120% 60% at 50% 0%, #1d2133 0%, rgba(18,20,31,0) 70%),
+    var(--night);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.5;
+  padding-bottom:86px;
+  min-height:100vh;
+}
+.wrap{max-width:560px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 16px 8px}
+
+/* ---- header ---- */
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+}
+.eyebrow b{color:var(--sky);font-weight:500}
+h1{
+  font-family:var(--serif);font-weight:300;font-size:30px;line-height:1.15;
+  margin:8px 0 2px;letter-spacing:-.01em;
+}
+h1 em{font-style:italic;color:var(--dawn);font-weight:500}
+.subhead{color:var(--muted);font-size:14px;margin:0 0 18px}
+
+/* ---- signature: compound curve ---- */
+.curve{
+  background:var(--card);border:1px solid var(--horizon);border-radius:var(--r);
+  padding:16px 16px 10px;margin-bottom:16px;position:relative;overflow:hidden;
+}
+.curve-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}
+.mult{font-family:var(--mono);font-size:26px;color:var(--gold);letter-spacing:-.02em}
+.curve-label{font-size:12px;color:var(--dim);text-align:right;line-height:1.4;max-width:170px}
+svg.spark{display:block;width:100%;height:76px}
+.curve-foot{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;margin-top:4px}
+
+/* ---- stats strip ---- */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--horizon);border-radius:12px;padding:11px 12px}
+.stat .n{font-family:var(--mono);font-size:19px;color:var(--ink)}
+.stat .l{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.stat.alert{border-color:var(--warn)}
+.stat.alert .n{color:var(--warn)}
+
+/* ---- day nav ---- */
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.daynav .d{font-family:var(--serif);font-size:17px;font-weight:500}
+.daynav .d span{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;font-weight:400}
+.nav-btn{
+  background:var(--card);border:1px solid var(--horizon);color:var(--sky);
+  width:40px;height:40px;border-radius:11px;font-size:17px;cursor:pointer;flex:none;
+}
+.nav-btn:disabled{opacity:.28;cursor:default}
+
+/* ---- habit list ---- */
+.group{margin-bottom:14px}
+.group-h{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);margin:0 0 7px 3px;
+}
+.habit{
+  display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+  background:var(--card);border:1px solid var(--horizon);border-radius:12px;
+  padding:14px 14px;margin-bottom:7px;cursor:pointer;color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.35;
+  transition:background .16s,border-color .16s;
+}
+.habit:active{background:var(--card-lift)}
+.habit.on{border-color:rgba(230,181,102,.5);background:rgba(230,181,102,.07)}
+.box{
+  width:23px;height:23px;border-radius:7px;border:1.5px solid var(--dim);flex:none;
+  display:grid;place-items:center;transition:.16s;
+}
+.habit.on .box{background:var(--gold);border-color:var(--gold)}
+.box svg{width:13px;height:13px;opacity:0;transition:opacity .16s}
+.habit.on .box svg{opacity:1}
+.htext{flex:1}
+.hsub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.habit.on .htext{color:var(--gold)}
+.tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  border:1px solid var(--horizon);border-radius:6px;padding:2px 6px;flex:none;
+}
+
+.note{
+  width:100%;background:var(--card);border:1px solid var(--horizon);border-radius:12px;
+  color:var(--ink);font-family:var(--sans);font-size:14px;padding:12px 14px;resize:none;
+}
+.note::placeholder{color:var(--dim)}
+.note:focus{outline:2px solid var(--sky);outline-offset:1px}
+
+/* ---- chain grid ---- */
+.grid{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin:4px 0 18px}
+.cell{aspect-ratio:1;border-radius:3px;background:var(--card);border:1px solid transparent}
+.cell.p1{background:rgba(230,181,102,.22)}
+.cell.p2{background:rgba(230,181,102,.5)}
+.cell.p3{background:var(--gold)}
+.cell.today{border-color:var(--sky)}
+.cell.future{background:rgba(255,255,255,.03)}
+.legend{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.08em}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* ---- plan view ---- */
+.phase{
+  background:var(--card);border:1px solid var(--horizon);border-radius:var(--r);
+  padding:16px;margin-bottom:10px;border-left:3px solid var(--horizon);
+}
+.phase.now{border-left-color:var(--dawn);background:var(--card-lift)}
+.phase.done{opacity:.55}
+.phase-n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.phase.now .phase-n{color:var(--dawn)}
+.phase h3{font-family:var(--serif);font-weight:500;font-size:19px;margin:5px 0 6px}
+.phase p{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.phase ul{margin:0;padding-left:17px;font-size:14px}
+.phase li{margin-bottom:4px}
+.src{
+  font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.05em;
+  margin-top:11px;padding-top:9px;border-top:1px solid var(--horizon);
+}
+
+/* ---- settings ---- */
+.field{margin-bottom:14px}
+.field label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.field input{
+  width:100%;background:var(--card);border:1px solid var(--horizon);border-radius:11px;
+  color:var(--ink);font-family:var(--mono);font-size:15px;padding:12px 13px;
+}
+.btn{
+  background:var(--card);border:1px solid var(--horizon);color:var(--sky);
+  border-radius:11px;padding:12px 16px;font-family:var(--sans);font-size:14px;cursor:pointer;width:100%;margin-bottom:8px;
+}
+.btn.primary{background:var(--dawn);border-color:var(--dawn);color:#1a1206;font-weight:600}
+.btn.danger{color:var(--warn)}
+.hint{font-size:13px;color:var(--dim);line-height:1.55;margin:2px 0 18px}
+
+/* ---- tabs ---- */
+nav.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  background:rgba(18,20,31,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--horizon);display:flex;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+}
+nav.tabs button{
+  flex:1;background:none;border:0;color:var(--dim);cursor:pointer;padding:8px 4px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  border-radius:9px;
+}
+nav.tabs button.on{color:var(--dawn);background:rgba(240,163,94,.1)}
+.view{display:none}
+.view.on{display:block}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:30;
+  background:var(--card-lift);border:1px solid var(--horizon);color:var(--ink);
+  padding:10px 16px;border-radius:11px;font-size:13.5px;opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ============ TODAY ============ -->
+<section class="view on" id="v-today">
+  <div class="eyebrow"><span id="phaseTag">Phase 1</span><b id="dayTag">Day 1 of 365</b></div>
+  <h1 id="greeting">Today you <em>show up</em>.</h1>
+  <p class="subhead" id="phaseName">Anchor the day</p>
+
+  <div class="curve">
+    <div class="curve-top">
+      <div class="mult" id="multVal">1.00×</div>
+      <div class="curve-label">Where 1% a day gets you, compounded across the days you finished.</div>
+    </div>
+    <svg class="spark" id="spark" viewBox="0 0 300 76" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="curve-foot" id="curveFoot">0 days banked</div>
+  </div>
+
+  <div class="strip">
+    <div class="stat"><div class="n" id="sStreak">0</div><div class="l">Streak</div></div>
+    <div class="stat" id="sMissCard"><div class="n" id="sMiss">—</div><div class="l">Yesterday</div></div>
+    <div class="stat"><div class="n" id="sBest">0</div><div class="l">Best run</div></div>
+  </div>
+
+  <div class="daynav">
+    <button class="nav-btn" id="prevDay" aria-label="Previous day">‹</button>
+    <div class="d" id="dateLabel">Today<span id="dateSub"></span></div>
+    <button class="nav-btn" id="nextDay" aria-label="Next day">›</button>
+  </div>
+
+  <div id="habitList"></div>
+
+  <textarea class="note" id="noteBox" rows="2" placeholder="One line, only if you feel like it."></textarea>
+</section>
+
+<!-- ============ CHAIN ============ -->
+<section class="view" id="v-chain">
+  <div class="eyebrow"><span>The chain</span><b id="chainPct">0%</b></div>
+  <h1>Don't break it <em>twice</em>.</h1>
+  <p class="subhead">One miss is noise. Two in a row is how a habit dies.</p>
+  <div class="grid" id="yearGrid"></div>
+  <div class="legend">
+    <span>NONE</span>
+    <i class="cell"></i><i class="cell p1"></i><i class="cell p2"></i><i class="cell p3"></i>
+    <span>ALL</span>
+  </div>
+  <div style="height:22px"></div>
+  <div class="phase">
+    <div class="phase-n">Rolling</div>
+    <h3 id="roll30">—</h3>
+    <p>Completion over your last 30 days. This is the number that predicts the year, not the streak.</p>
+  </div>
+</section>
+
+<!-- ============ PLAN ============ -->
+<section class="view" id="v-plan">
+  <div class="eyebrow"><span>The year</span><b>7 phases</b></div>
+  <h1>Two habits now. <em>Everything</em> by December.</h1>
+  <p class="subhead">Each phase adds one or two things and changes nothing else. Nothing gets added until what's already there runs without effort.</p>
+  <div id="phaseList"></div>
+</section>
+
+<!-- ============ SETUP ============ -->
+<section class="view" id="v-setup">
+  <div class="eyebrow"><span>Setup</span><b id="saveState">Saved</b></div>
+  <h1>Your <em>settings</em>.</h1>
+  <p class="subhead">Set these once. Changing the start date shifts the whole year.</p>
+
+  <div class="field"><label for="fStart">Day 1</label><input type="date" id="fStart"></div>
+  <div class="field"><label for="fWake">Weekday wake-up</label><input type="time" id="fWake" value="09:30"></div>
+  <div class="field"><label for="fWeekend">Weekend ceiling</label><input type="time" id="fWeekend" value="11:00"></div>
+  <div class="field"><label for="fQuit">Quit date</label><input type="date" id="fQuit"></div>
+  <p class="hint">Your quit date defaults to day 43 — six weeks in, after sleep has settled. Moving it earlier than day 30 is usually a mistake: quitting while exhausted is quitting on hard mode.</p>
+
+  <button class="btn" id="btnExport">Export a backup file</button>
+  <button class="btn" id="btnImport">Restore from a backup</button>
+  <input type="file" id="fileIn" accept="application/json" style="display:none">
+  <button class="btn danger" id="btnReset">Erase everything and start over</button>
+  <p class="hint">Your log lives in this browser. Export a backup every month or two, and before switching phones.</p>
+</section>
+
+</div>
+
+<nav class="tabs">
+  <button class="on" data-v="today">Today</button>
+  <button data-v="chain">Chain</button>
+  <button data-v="plan">Plan</button>
+  <button data-v="setup">Setup</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   STORAGE — tries the app's store, then the browser's, then memory.
+   ============================================================ */
+const KEY = "yearone:v1";
+const mem = {};
+const Store = {
+  async get(){
+    try{ if(window.storage){ const r = await window.storage.get(KEY); if(r&&r.value) return JSON.parse(r.value); } }catch(e){}
+    try{ const v = window.localStorage.getItem(KEY); if(v) return JSON.parse(v); }catch(e){}
+    return mem[KEY] ? JSON.parse(mem[KEY]) : null;
+  },
+  async set(obj){
+    const s = JSON.stringify(obj);
+    mem[KEY] = s;
+    try{ if(window.storage){ await window.storage.set(KEY, s); return; } }catch(e){}
+    try{ window.localStorage.setItem(KEY, s); }catch(e){}
+  }
+};
+
+/* ============================================================
+   THE PLAN
+   ============================================================ */
+const PHASES = [
+  { n:1, from:1,   to:14,  title:"Anchor the day",
+    why:"Everything else is downstream of a body that knows what time it is. Fix the wake-up and the bedtime follows on its own — you don't have to negotiate with it.",
+    adds:["Same wake-up time, seven days a week","10 minutes outside within half an hour of waking"],
+    src:"Clear — keystone habit, two-minute rule · Bryson — light as the master clock" },
+  { n:2, from:15,  to:28,  title:"Fuel the morning",
+    why:"No diet. Two additions that need no decisions, attached to a habit you already have running.",
+    adds:["Water before coffee","Protein in the first meal"],
+    src:"Clear — habit stacking · Kahneman — fewer decisions, more left in the tank" },
+  { n:3, from:29,  to:56,  title:"Notice, then quit",
+    why:"Two weeks of writing each cigarette down before lighting it. Not to stop — to see the pattern. Then the quit date lands on a body that's actually sleeping.",
+    adds:["Log every cigarette before you light it","Walk goes to 20 minutes","Quit date: day 43"],
+    src:"Clear — make it obvious, then difficult · Bryson — nicotine's course through the body" },
+  { n:4, from:57,  to:112, title:"Build something",
+    why:"First month smoke-free, so this is deliberately light. Two short strength sessions a week, and a screen cut-off that protects the sleep you've earned.",
+    adds:["Strength, twice a week, 15 minutes","Screens down 45 minutes before bed"],
+    src:"Clear — the two-minute rule, scaled" },
+  { n:5, from:113, to:182, title:"Hold the line",
+    why:"Halfway. Nothing dramatic gets added — the work here is not losing what you have. A weekly review is where you catch a habit slipping before it's gone.",
+    adds:["Strength three times a week","A second real meal you cooked","Sunday review, ten minutes"],
+    src:"Covey — sharpen the saw; weekly, not daily, planning" },
+  { n:6, from:183, to:273, title:"Point it somewhere",
+    why:"The habits are running on their own now, which frees up the thing you've been short of all year: attention. Aim it at the app.",
+    adds:["15 minutes reading","Four focused blocks a week on your own project"],
+    src:"Covey — first things first · Kahneman — attention is the scarce resource" },
+  { n:7, from:274, to:365, title:"Become the person",
+    why:"The point was never the checkboxes. It was becoming someone who doesn't need them.",
+    adds:["Tomorrow's three priorities, written the night before","Everything above, still running"],
+    src:"Clear — identity-based habits · Covey — begin with the end in mind" }
+];
+
+const HABITS = [
+  { id:"wake",  from:1,   label:"Woke at target time",        sub:d=>`${d.wk} weekdays · ${d.we} weekend ceiling`, req:true },
+  { id:"light", from:1,   label:"10 min outside after waking", sub:()=>"Daylight, not a screen. Cloudy still counts.", req:true },
+  { id:"water", from:15,  label:"Water before coffee",         sub:()=>"One full glass. Fill it the night before.", req:true },
+  { id:"meal1", from:15,  label:"Protein in the first meal",   sub:()=>"Eggs, yoghurt, leftovers. Not a pastry.", req:true },
+  { id:"cigLog",from:29,  to:42, label:"Logged every cigarette", sub:()=>"Write it down before you light it.", req:true },
+  { id:"walk",  from:29,  label:"20 minute walk",              sub:()=>"The morning 10 minutes, extended.", req:true },
+  { id:"free",  from:43,  label:"Smoke-free day",              sub:()=>"Day counter, not a judgement.", req:true },
+  { id:"screen",from:57,  label:"Screens down 45 min before bed", sub:()=>"Phone charges in another room.", req:true },
+  { id:"lift",  from:57,  label:"Strength session",            sub:()=>"Push-ups, squats, a hang. 15 minutes.", req:false, weekly:2, weeklyFrom113:3 },
+  { id:"meal2", from:113, label:"A second real meal",          sub:()=>"Cooked by you. Not from a packet.", req:true },
+  { id:"review",from:113, label:"Weekly review",               sub:()=>"Sundays. Ten minutes. What slipped?", req:false, weekly:1 },
+  { id:"read",  from:183, label:"15 minutes reading",          sub:()=>"Paper if you can.", req:true },
+  { id:"deep",  from:183, label:"Focused block on the app",    sub:()=>"50 minutes, phone elsewhere.", req:false, weekly:4 },
+  { id:"prio",  from:274, label:"Tomorrow's three priorities", sub:()=>"Written before bed. Three, not ten.", req:true }
+];
+
+/* ============================================================
+   STATE + DATE HELPERS
+   ============================================================ */
+let S = null;
+let cursor = 0; // 0 = today, -1 = yesterday...
+
+const pad = n => String(n).padStart(2,"0");
+const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d, 12); };
+const shift = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+const today = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate(), 12); };
+const daysBetween = (a,b) => Math.round((b-a)/86400000);
+const dayNum = d => daysBetween(parse(S.start), d) + 1;
+const isWeekend = d => d.getDay()===0 || d.getDay()===6;
+
+function habitsFor(n, date){
+  return HABITS.filter(h=>{
+    if(n < h.from) return false;
+    if(h.to && n > h.to) return false;
+    if(h.id === "review" && date && date.getDay() !== 0) return false;
+    return true;
+  });
+}
+function requiredFor(n, date){ return habitsFor(n, date).filter(h=>h.req); }
+function phaseFor(n){ return PHASES.find(p => n >= p.from && n <= p.to) || PHASES[PHASES.length-1]; }
+
+function dayComplete(date){
+  const n = dayNum(date);
+  if(n < 1) return false;
+  const req = requiredFor(n, date);
+  if(!req.length) return false;
+  const log = S.log[key(date)] || {};
+  return req.every(h => log[h.id]);
+}
+function dayRatio(date){
+  const n = dayNum(date);
+  if(n < 1) return -1;
+  const all = habitsFor(n, date);
+  if(!all.length) return -1;
+  const log = S.log[key(date)] || {};
+  return all.filter(h=>log[h.id]).length / all.length;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const $ = id => document.getElementById(id);
+
+function render(){
+  renderToday();
+  renderChain();
+  renderPlan();
+}
+
+function renderToday(){
+  const date = shift(today(), cursor);
+  const n = Math.max(1, dayNum(date));
+  const ph = phaseFor(n);
+
+  $("phaseTag").textContent = `Phase ${ph.n} · ${ph.title}`;
+  $("dayTag").textContent = `Day ${n} of 365`;
+  $("phaseName").textContent = ph.why;
+
+  const streak = currentStreak();
+  $("greeting").innerHTML = streak >= 2
+    ? `${streak} days <em>unbroken</em>.`
+    : `Today you <em>show up</em>.`;
+
+  // date nav
+  const t = today();
+  const isToday = cursor === 0;
+  $("dateLabel").childNodes[0].nodeValue = isToday ? "Today" :
+    (cursor === -1 ? "Yesterday" : date.toLocaleDateString(undefined,{weekday:"long"}));
+  $("dateSub").textContent = date.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  $("nextDay").disabled = cursor >= 0;
+  $("prevDay").disabled = dayNum(shift(date,-1)) < 1;
+
+  // habits
+  const list = $("habitList");
+  list.innerHTML = "";
+  const log = S.log[key(date)] || {};
+  const subData = { wk: fmtTime(S.wake), we: fmtTime(S.weekend) };
+  const items = habitsFor(n, date);
+
+  const daily = items.filter(h=>h.req);
+  const flex  = items.filter(h=>!h.req);
+
+  if(daily.length) list.appendChild(groupEl("Every day", daily, log, subData, date, n));
+  if(flex.length)  list.appendChild(groupEl("This week", flex, log, subData, date, n));
+
+  $("noteBox").value = (S.notes && S.notes[key(date)]) || "";
+
+  // stats
+  const done = Object.keys(S.log).filter(k => dayComplete(parse(k))).length;
+  $("sStreak").textContent = streak;
+  $("sBest").textContent = Math.max(S.best||0, streak);
+  const y = shift(t,-1);
+  const yOK = dayNum(y) >= 1 ? dayComplete(y) : true;
+  $("sMiss").textContent = dayNum(y) < 1 ? "—" : (yOK ? "Held" : "Missed");
+  $("sMissCard").classList.toggle("alert", dayNum(y) >= 1 && !yOK);
+
+  // compound curve
+  const mult = Math.pow(1.01, done);
+  $("multVal").textContent = mult.toFixed(2) + "×";
+  $("curveFoot").textContent = `${done} day${done===1?"":"s"} banked · 1% compounded`;
+  drawSpark(done);
+}
+
+function groupEl(title, arr, log, subData, date, n){
+  const wrap = document.createElement("div");
+  wrap.className = "group";
+  const h = document.createElement("div");
+  h.className = "group-h";
+  h.textContent = title;
+  wrap.appendChild(h);
+  arr.forEach(hb=>{
+    const b = document.createElement("button");
+    b.className = "habit" + (log[hb.id] ? " on" : "");
+    b.setAttribute("aria-pressed", !!log[hb.id]);
+    let tag = "";
+    if(hb.weekly){
+      const target = (n >= 113 && hb.weeklyFrom113) ? hb.weeklyFrom113 : hb.weekly;
+      tag = `<span class="tag">${weekCount(hb.id, date)}/${target}</span>`;
+    }
+    b.innerHTML = `<span class="box"><svg viewBox="0 0 16 16" fill="none" stroke="#1a1206" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg></span>
+      <span class="htext">${hb.label}<span class="hsub">${hb.sub(subData)}</span></span>${tag}`;
+    b.onclick = ()=> toggle(hb.id, date);
+    wrap.appendChild(b);
+  });
+  return wrap;
+}
+
+function weekCount(id, date){
+  let c = 0;
+  const monday = shift(date, -((date.getDay()+6)%7));
+  for(let i=0;i<7;i++){
+    const k = key(shift(monday,i));
+    if(S.log[k] && S.log[k][id]) c++;
+  }
+  return c;
+}
+
+function drawSpark(done){
+  const svg = $("spark");
+  const W = 300, H = 76, span = 365;
+  const maxY = Math.pow(1.01, span);
+  const pt = i => {
+    const x = (i/span)*W;
+    const y = H - 4 - ((Math.pow(1.01,i)-1)/(maxY-1))*(H-10);
+    return [x,y];
+  };
+  let full = "", live = "";
+  for(let i=0;i<=span;i+=3){
+    const [x,y] = pt(i);
+    full += (i===0?"M":"L") + x.toFixed(1) + " " + y.toFixed(1) + " ";
+  }
+  for(let i=0;i<=done;i+=Math.max(1,Math.round(done/60)||1)){
+    const [x,y] = pt(i);
+    live += (i===0?"M":"L") + x.toFixed(1) + " " + y.toFixed(1) + " ";
+  }
+  const [cx,cy] = pt(done);
+  svg.innerHTML = `
+    <path d="${full}" fill="none" stroke="#2c3146" stroke-width="1.5"/>
+    ${done>0?`<path d="${live}" fill="none" stroke="#e6b566" stroke-width="2.2" stroke-linecap="round"/>`:""}
+    <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="3.4" fill="#f0a35e"/>`;
+}
+
+function currentStreak(){
+  let s = 0, d = today();
+  if(!dayComplete(d)) d = shift(d,-1);
+  while(dayNum(d) >= 1 && dayComplete(d)){ s++; d = shift(d,-1); }
+  return s;
+}
+
+function renderChain(){
+  const g = $("yearGrid");
+  g.innerHTML = "";
+  const start = parse(S.start);
+  const tKey = key(today());
+  let done = 0, elapsed = 0;
+  for(let i=0;i<365;i++){
+    const d = shift(start,i);
+    const c = document.createElement("div");
+    c.className = "cell";
+    const r = dayRatio(d);
+    if(d > today()) c.classList.add("future");
+    else {
+      elapsed++;
+      if(dayComplete(d)) done++;
+      if(r >= 1) c.classList.add("p3");
+      else if(r >= .6) c.classList.add("p2");
+      else if(r > 0) c.classList.add("p1");
+    }
+    if(key(d) === tKey) c.classList.add("today");
+    c.title = `Day ${i+1} · ${d.toLocaleDateString()}`;
+    g.appendChild(c);
+  }
+  $("chainPct").textContent = elapsed ? Math.round(done/elapsed*100) + "%" : "0%";
+
+  let r30 = 0, n30 = 0;
+  for(let i=1;i<=30;i++){
+    const d = shift(today(), -i);
+    if(dayNum(d) < 1) break;
+    n30++; if(dayComplete(d)) r30++;
+  }
+  $("roll30").textContent = n30 ? `${r30} of the last ${n30} days` : "Not enough days yet";
+}
+
+function renderPlan(){
+  const n = Math.max(1, dayNum(today()));
+  const box = $("phaseList");
+  box.innerHTML = "";
+  PHASES.forEach(p=>{
+    const el = document.createElement("div");
+    el.className = "phase" + (n>=p.from&&n<=p.to ? " now" : (n>p.to ? " done" : ""));
+    const from = shift(parse(S.start), p.from-1).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+    const to   = shift(parse(S.start), p.to-1).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+    el.innerHTML = `<div class="phase-n">Phase ${p.n} · Days ${p.from}–${p.to} · ${from} – ${to}</div>
+      <h3>${p.title}</h3><p>${p.why}</p>
+      <ul>${p.adds.map(a=>`<li>${a}</li>`).join("")}</ul>
+      <div class="src">${p.src}</div>`;
+    box.appendChild(el);
+  });
+}
+
+function fmtTime(t){
+  if(!t) return "—";
+  const [h,m] = t.split(":").map(Number);
+  const ap = h>=12 ? "PM":"AM";
+  const hh = h%12===0?12:h%12;
+  return `${hh}:${pad(m)} ${ap}`;
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+async function toggle(id, date){
+  const k = key(date);
+  S.log[k] = S.log[k] || {};
+  S.log[k][id] = !S.log[k][id];
+  if(!S.log[k][id]) delete S.log[k][id];
+  if(!Object.keys(S.log[k]).length) delete S.log[k];
+  S.best = Math.max(S.best||0, currentStreak());
+  await save();
+  render();
+}
+
+let saveTimer;
+async function save(){
+  clearTimeout(saveTimer);
+  $("saveState").textContent = "Saving";
+  saveTimer = setTimeout(async ()=>{
+    await Store.set(S);
+    $("saveState").textContent = "Saved";
+  }, 120);
+}
+
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  setTimeout(()=>t.classList.remove("on"), 2200);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+(async function init(){
+  S = await Store.get();
+  if(!S){
+    const t = today();
+    S = { start:key(t), wake:"09:30", weekend:"11:00", quit:key(shift(t,42)), log:{}, notes:{}, best:0 };
+    await Store.set(S);
+  }
+  S.notes = S.notes || {};
+
+  $("fStart").value   = S.start;
+  $("fWake").value    = S.wake;
+  $("fWeekend").value = S.weekend;
+  $("fQuit").value    = S.quit;
+
+  document.querySelectorAll("nav.tabs button").forEach(b=>{
+    b.onclick = ()=>{
+      document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("on"));
+      document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+      $("v-"+b.dataset.v).classList.add("on");
+      window.scrollTo(0,0);
+    };
+  });
+
+  $("prevDay").onclick = ()=>{ cursor--; renderToday(); };
+  $("nextDay").onclick = ()=>{ if(cursor<0){ cursor++; renderToday(); } };
+
+  $("noteBox").oninput = async e=>{
+    const k = key(shift(today(), cursor));
+    if(e.target.value.trim()) S.notes[k] = e.target.value;
+    else delete S.notes[k];
+    await save();
+  };
+
+  ["fStart","fWake","fWeekend","fQuit"].forEach(id=>{
+    $(id).onchange = async e=>{
+      const map = {fStart:"start", fWake:"wake", fWeekend:"weekend", fQuit:"quit"};
+      S[map[id]] = e.target.value;
+      if(id === "fStart"){ S.quit = key(shift(parse(e.target.value),42)); $("fQuit").value = S.quit; }
+      await save(); render();
+    };
+  });
+
+  $("btnExport").onclick = ()=>{
+    const blob = new Blob([JSON.stringify(S,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `year-one-backup-${key(today())}.json`;
+    a.click();
+    toast("Backup downloaded");
+  };
+  $("btnImport").onclick = ()=> $("fileIn").click();
+  $("fileIn").onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = async ()=>{
+      try{
+        const d = JSON.parse(r.result);
+        if(!d.start || !d.log) throw new Error("bad");
+        S = d; S.notes = S.notes||{};
+        await Store.set(S);
+        $("fStart").value=S.start; $("fWake").value=S.wake;
+        $("fWeekend").value=S.weekend; $("fQuit").value=S.quit;
+        render(); toast("Backup restored");
+      }catch(err){ toast("That file isn't a Year One backup"); }
+    };
+    r.readAsText(f);
+  };
+  $("btnReset").onclick = async ()=>{
+    if(!confirm("This erases every day you've logged. There's no undo.")) return;
+    const t = today();
+    S = { start:key(t), wake:"09:30", weekend:"11:00", quit:key(shift(t,42)), log:{}, notes:{}, best:0 };
+    await Store.set(S);
+    $("fStart").value=S.start; $("fQuit").value=S.quit;
+    render(); toast("Cleared. Day 1 is today.");
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
