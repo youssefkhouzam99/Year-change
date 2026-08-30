@@ -2,7 +2,7 @@
   "name": "Year One",
   "short_name": "Year One",
   "description": "A year of small habits, logged daily.",
-  "start_url": "./index.html",
+  "start_url": "./year-one.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
